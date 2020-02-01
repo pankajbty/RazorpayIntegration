@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Razorpay Payment Page</title>
+</head>
+<body>
+<button id="rzp-button1" onclick="call()">Make Payment</button>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<form action="http://localhost:63343/RazorpayIntegration/RazorpayCheckout/src/PaymentSuccessPage.html" method="post" id="form1">
+    <input type="submit" hidden="hidden" id="moveToSuccessPage"/>
+</form>
+</body>
+<script>
+function call(){
+    var url = window.location.search;
+    url = url.split("=");
+    var urlTest = url[1].split("&");
+    var orderID = urlTest[0];
+    var amount = urlTest[1];
+
+
+    var options = {
+        "key": "rzp_test_HZ8W2AX9wA0wmX", // Enter the Key ID generated from the Dashboard
+        "amount": amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise or INR 500.
+        "currency": "INR",
+    //    "name": "Acme Corp",
+        "description": "Pay tribute to retired/martyer defence personal",
+        "image": "https://www.example.com",
+        "order_id": orderID,//This is a sample Order ID. Create an Order using Orders API. (https://razorpay.com/docs/payment-gateway/orders/integration/#step-1-create-an-order). Refer the Checkout form table given below
+        "handler": function (response){
+            document.getElementById('moveToSuccessPage').click();
+        },
+        "prefill": {
+            "name": "Pankaj Kumar Yadav",
+            "email": "pankajbty@gmail.com",
+            "contact": "9980458254"
+        },
+        "notes": {
+            "address": "note value"
+        },
+        "theme": {
+            "color": "#0B27F3"
+        }
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+<!--    document.getElementById('rzp-button1').onclick = function(e){-->
+<!--	  -->
+<!--    }-->
+}
+
+</script>
+</html>

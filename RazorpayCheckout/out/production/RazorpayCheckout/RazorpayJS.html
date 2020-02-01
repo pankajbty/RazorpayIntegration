@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Razorpay Payment Page</title>
+</head>
+<body>
+Enter Amount :  <input type="text" id="enteramount"/></br>
+<button id="rzp-button1">Pay</button>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+var inputAmount = document.getElementById("enteramount").value;
+// New XMLHTTPRequest
+var request = new XMLHttpRequest();
+
+function CallWebAPI() {
+    var body = {
+    		"amount":40000,
+    		"currency":"INR",
+    		"payment_capture":1
+    }
+    request.open("POST", "http://localhost:8080/getpaymentlink", true);
+    request.setRequestHeader("Content-type", "application/json");
+    request.send(JSON.stringify(body));
+/*     var myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
+    myHeaders.append('Authorization', test);
+
+    var myInit = {
+      method: 'POST',
+      headers: myHeaders,
+      body: JSON.stringify(body),
+      mode: 'cors',
+      cache: 'default'
+    };
+
+    var request = new Request('https://api.razorpay.com/v1/orders', myInit);
+    var exchangeObj = request.send(); */
+    // view request status
+    alert(request.status);
+    /* response.innerHTML = request.responseText; */
+}
+
+var options = {
+    "key": "rzp_test_HZ8W2AX9wA0wmX", // Enter the Key ID generated from the Dashboard
+    "amount": inputAmount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise or INR 500.
+    "currency": "INR",
+//    "name": "Acme Corp",
+    "description": "Pay tribute to retired/martyer defence personal",
+    "image": "https://example.com/your_logo",
+    "order_id": "order_Dy2TvvrFYibOPr",//This is a sample Order ID. Create an Order using Orders API. (https://razorpay.com/docs/payment-gateway/orders/integration/#step-1-create-an-order). Refer the Checkout form table given below
+    "handler": function (response){
+        alert(response.razorpay_payment_id);
+    },
+    "prefill": {
+        "name": "Pankaj Kumar Yadav",
+        "email": "pankajbty@gmail.com",
+        "contact": "9980458254"
+    },
+    "notes": {
+        "address": "note value"
+    },
+    "theme": {
+        "color": "#0B27F3"
+    }
+};
+var rzp1 = new Razorpay(options);
+
+document.getElementById('rzp-button1').onclick = function(e){
+	CallWebAPI();
+	rzp1.open();
+    e.preventDefault();
+
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Order</title>
+    <script type="text/javascript" language="JavaScript">
+    function CallWebAPI() {
+        var request = new XMLHttpRequest();
+        var inputAmount = document.getElementById("enteramount").value+'00';
+        var body = {
+                "amount":inputAmount,
+                "currency":"INR",
+                "payment_capture":1
+        }
+        request.open("POST", "http://localhost:8080/getpaymentlink", true);
+        request.setRequestHeader("Content-type", "application/json");
+        request.send(JSON.stringify(body));
+        var orderID = "";
+
+        request.onload = function() {
+            if (request.status != 200) { // analyze HTTP status of the response
+                console.log(`Error ${request.status}: ${request.statusText}`); // e.g. 404: Not Found
+            } else { // show the result
+                console.log(`Done, got ${request.response.length} bytes`); // responseText is the server
+            }
+
+            let url = 'http://localhost:63343/RazorpayIntegration/RazorpayCheckout/src/RazorpayJS.html?data='+ orderID +'&'+inputAmount;
+            document.getElementById('form1').action = url;
+            var moveToNext = document.getElementById("moveToNextPage");
+            moveToNext.click();
+        };
+
+        request.onprogress = function(event) {
+            if (event.lengthComputable) {
+                console.log(`Received ${event.loaded} of ${event.total} bytes`);
+            } else {
+                console.log(`Received ${event.loaded} bytes`); // no Content-Length
+                let responseObj = request.response;
+                var JSONObject = JSON.parse(responseObj);
+                orderID = JSONObject.orderId;
+            }
+        };
+
+        request.onerror = function() {
+            console.log("Request failed");
+        };
+
+    }
+
+</script>
+</head>
+<body>
+<form action="http://localhost:63343/RazorpayIntegration/RazorpayCheckout/src/RazorpayJS.html" method="post" id="form1">
+    <input type="submit" hidden="hidden" id="moveToNextPage"/>
+</form>
+<!--<form action="http://localhost:63342/RazorpayCheckout/RazorpayJS.html" method="post">-->
+        Enter Amount: <input type="number" id="enteramount"></br>
+<!--    <button id="createOrder" onclick="CallWebAPI()">Create Order</button>-->
+        <button id="createOrder" onclick="CallWebAPI()">Create Order</button>
+<!--</form>-->
+</body>
+</html>
